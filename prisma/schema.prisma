@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  rating      Int       @default(0)
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  products    Product[]
+  order       Order[]
+
+  @@map("restaurants")
+}
+
+model Product {
+  id           String     @id @default(uuid())
+  title        String
+  description  String
+  price        Int
+  restaurantId String     @map("restaurant_id")
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Deliveryman {
+  id        String   @id @default(uuid())
+  name      String
+  document  String
+  rating    Int
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  order     Order[]
+
+  @@map("deliverymans")
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  document  String
+  rating    Int
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  order     Order[]
+
+  @@map("clients")
+}
+
+model Order {
+  id            String         @id @default(uuid())
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id])
+  restaurantId  String
+  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id])
+  deliverymanId String?
+  deliveryman   Deliveryman?   @relation(fields: [deliverymanId], references: [id])
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  products      OrderProduct[]
+
+  @@map("orders")
+}
+
+model OrderProduct {
+  id        String   @id @default(uuid())
+  productId String
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("order_products")
+}
+
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  password    String
+  accountType AccountType  @map("account_type")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  restaurant  Restaurant?
+  deliveryman Deliveryman?
+  client      Client?
+
+  @@map("users")
+}
+
+enum AccountType {
+  RESTAURANT
+  DELIVERYMAN
+  CLIENT
+}

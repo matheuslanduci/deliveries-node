@@ -1,0 +1,17 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "..",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@shared/(.*)$": "<rootDir>/src/shared/$1",
+    "^@auth/(.*)$": "<rootDir>/src/modules/auth/$1",
+    "^@restaurants/(.*)$": "<rootDir>/src/modules/restaurants/$1",
+    "^@clients/(.*)$": "<rootDir>/src/modules/clients/$1",
+    "^@deliverymans/(.*)$": "<rootDir>/src/modules/deliverymans/$1",
+    "^src/(.*)$": "<rootDir>/src/$1"
+  }
+}
